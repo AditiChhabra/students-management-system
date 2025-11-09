@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marks Entry</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Marks Entry</h2>
+
+  <form id="marksForm">
+    <label>Select Student</label>
+    <select id="studentSelect" name="student_id" required></select>
+
+    <label>Subject</label>
+    <input type="text" name="subject" required>
+
+    <label>Marks Scored</label>
+    <input type="number" name="marks" required>
+
+    <label>Max Marks</label>
+    <input type="number" name="max_marks" required>
+
+    <button type="submit">Save Marks</button>
+  </form>
+
+  <p id="msg"></p>
+  <br>
+  <a href="/dashboard.html">⬅ Back to Dashboard</a>
+</div>
+
+<script>
+// Load students in dropdown
+(async () => {
+  const res = await fetch('/students/list');
+  const students = await res.json();
+  const dropdown = document.getElementById('studentSelect');
+
+  students.forEach(s => {
+    dropdown.innerHTML += `<option value="${s.id}">${s.roll_number} - ${s.name}</option>`;
+  });
+})();
+
+// Handle form submission
+document.getElementById("marksForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+
+  const response = await fetch('/marks/add', {
+    method: 'POST',
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData)
+  });
+
+  const result = await response.json();
+  const msg = document.getElementById('msg');
+
+  if (response.ok) {
+    msg.textContent = "✅ Marks Saved!";
+    msg.style.color = "green";
+    e.target.reset();
+  } else {
+    msg.textContent = result.error || "Error saving marks";
+    msg.style.color = "red";
+  }
+});
+</script>
+
+</body>
+</html>

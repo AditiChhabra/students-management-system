@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Attendance Management</h2>
+
+  <label>Select Date:</label>
+  <input type="date" id="attDate">
+
+  <button id="loadBtn">Load Students</button>
+
+  <form id="attendanceForm" style="margin-top: 20px;"></form>
+
+  <p id="msg"></p>
+
+  <br>
+  <a href="/dashboard.html">⬅ Back to Dashboard</a>
+</div>
+
+<script>
+document.getElementById("loadBtn").addEventListener("click", async () => {
+  const date = document.getElementById("attDate").value;
+  if (!date) return alert("Select a date first!");
+
+  const res = await fetch('/attendance/list');
+  const students = await res.json();
+
+  const form = document.getElementById("attendanceForm");
+  form.innerHTML = "";
+
+  students.forEach(s => {
+    form.innerHTML += `
+      <div>
+        ${s.roll_number} - ${s.name}
+        <select name="${s.id}">
+          <option value="Present">Present</option>
+          <option value="Absent">Absent</option>
+        </select>
+      </div>
+    `;
+  });
+
+  form.innerHTML += `<button type="submit">Save Attendance</button>`;
+
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    formData.append("date", date);
+
+    const response = await fetch('/attendance/save', {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData)
+    });
+
+    const result = await response.json();
+    const msg = document.getElementById("msg");
+
+    if (response.ok) {
+      msg.textContent = "✅ Attendance Saved!";
+      msg.style.color = "green";
+    } else {
+      msg.textContent = result.error || "Error saving attendance";
+      msg.style.color = "red";
+    }
+  };
+});
+</script>
+
+</body>
+</html>

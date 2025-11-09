@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Faculty Login</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+  <h2>Faculty Login</h2>
+  <form id="loginForm">
+    <label>Username</label>
+    <input name="username" required>
+
+    <label>Password</label>
+    <input name="password" type="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const response = await fetch('/auth/login', {
+  method: 'POST',
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: new URLSearchParams(formData)
+});
+
+
+  const result = await response.json();
+  const msg = document.getElementById('msg');
+
+  if (response.ok) {
+    msg.textContent = "✅ Login successful!";
+    msg.style.color = "green";
+    window.location.href = "/dashboard.html";
+  } else {
+    msg.textContent = result.error || "Login failed";
+    msg.style.color = "red";
+  }
+});
+</script>
+</body>
+</html>

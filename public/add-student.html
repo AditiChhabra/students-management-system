@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Student</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Add New Student</h2>
+
+  <form id="studentForm">
+    <label>Name</label>
+    <input type="text" name="name" required>
+
+    <label>Roll Number</label>
+    <input type="text" name="roll_number" required>
+
+    <label>Course</label>
+<input type="text" name="course" required>
+
+<label>Semester</label>
+<input type="text" name="semester" required>
+
+    <button type="submit">Add Student</button>
+  </form>
+
+  <p id="msg"></p>
+
+  <br>
+  <a href="/dashboard.html">⬅ Back to Dashboard</a>
+</div>
+
+<script>
+document.getElementById("studentForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+
+  const response = await fetch('/students/add', {
+    method: 'POST',
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(formData)
+  });
+
+  const result = await response.json();
+  const msg = document.getElementById('msg');
+
+  if (response.ok) {
+    msg.textContent = "✅ Student Added Successfully!";
+    msg.style.color = "green";
+    e.target.reset();
+  } else {
+    msg.textContent = result.error || "Something went wrong";
+    msg.style.color = "red";
+  }
+});
+</script>
+
+</body>
+</html>

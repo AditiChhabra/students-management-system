@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Faculty Dashboard</h2>
+
+  <a href="/add-student.html">➕ Add Student</a><br><br>
+  <a href="/attendance.html">📝 Manage Attendance</a><br><br>
+  <a href="/marks.html">📊 Enter Marks</a><br><br>
+  <a href="/reports.html">📄 View Reports</a><br><br>
+
+  <button id="logoutBtn">Logout</button>
+</div>
+
+<script>
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await fetch('/auth/logout', { method: 'POST' });
+  window.location.href = '/';
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Reports</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h2>Student Reports</h2>
+
+  <label>Select Student</label>
+  <select id="studentSelect"></select>
+
+  <button id="loadBtn">Load Report</button>
+
+  <div id="reportArea" style="margin-top: 20px;"></div>
+
+  <br>
+  <a href="/dashboard.html">⬅ Back to Dashboard</a>
+</div>
+
+<script>
+async function loadStudents() {
+  const res = await fetch('/students/list');
+  const students = await res.json();
+  const select = document.getElementById("studentSelect");
+
+  students.forEach(s => {
+    select.innerHTML += `<option value="${s.id}">${s.roll_number} - ${s.name}</option>`;
+  });
+}
+
+document.getElementById("loadBtn").addEventListener("click", async () => {
+  const id = document.getElementById("studentSelect").value;
+  const res = await fetch(`/reports/${id}`);
+  const data = await res.json();
+
+  document.getElementById("reportArea").innerHTML = `
+<h3>${data.student.name} (${data.student.roll_number})</h3>
+<p><strong>Course:</strong> ${data.student.course}</p>
+<p><strong>Semester:</strong> ${data.student.semester}</p>
+<p><strong>Attendance:</strong> ${data.attendance_percentage}%</p>
+
+
+    <h4>Marks</h4>
+    <ul>
+      ${data.marks.map(m => `<li>${m.subject}: ${m.marks}/${m.max_marks}</li>`).join('')}
+    </ul>
+  `;
+});
+
+loadStudents();
+</script>
+
+</body>
+</html>
